@@ -4,7 +4,7 @@ name: 🌙 Nightly Build
 on:
   schedule:
     # Runs at 2 AM UTC every day
-    - cron: '0 2 * * *'
+    - cron: '15 1 * * *'
   workflow_dispatch: # Allows manual trigger
 
 env:
