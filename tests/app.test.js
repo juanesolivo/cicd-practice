@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 const request = require('supertest');
 const app = require('../src/app');
 
