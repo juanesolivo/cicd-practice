@@ -4,7 +4,7 @@ name: 🔄 Pull Request Checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [ main, develop ]
+    branches: [ master, develop ]
 
 env:
   NODE_VERSION: '18'
@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "Checking for changes in sensitive files..."
           SENSITIVE_FILES=".github/workflows package.json"
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD || echo "")
+          CHANGED_FILES=$(git diff --name-only origin/master...HEAD || echo "")
           
           for file in $SENSITIVE_FILES; do
             if echo "$CHANGED_FILES" | grep -q "$file"; then
