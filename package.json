@@ -1,0 +1,27 @@
+{
+  "name": "cicd-practice",
+  "version": "1.0.0",
+  "description": "A project to learn CI/CD with GitHub Actions",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "build": "echo 'Building application...' && mkdir -p dist && cp -r src/* dist/"
+  },
+  "keywords": ["cicd", "github-actions", "nodejs"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "eslint": "^8.42.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  }
+}

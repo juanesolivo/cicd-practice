@@ -1,0 +1,87 @@
+# Release Workflow - Creates releases and handles versioning
+name: 📦 Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on version tags like v1.0.0
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  create-release:
+    name: 📦 Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for changelog generation
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests
+        run: npm test
+
+      - name: 🏗️ Build application
+        run: npm run build
+
+      - name: 📋 Generate changelog
+        id: changelog
+        run: |
+          echo "Generating changelog for release..."
+          # In a real project, you might use tools like conventional-changelog
+          CHANGELOG=$(git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD^)..HEAD || echo "- Initial release")
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 📦 Create zip package
+        run: |
+          mkdir release-package
+          cp -r dist/* release-package/
+          cp package.json release-package/
+          cp README.md release-package/
+          zip -r release-package.zip release-package/
+
+      - name: 🏷️ Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## 🎉 Release Notes
+            
+            ### What's Changed
+            ${{ steps.changelog.outputs.CHANGELOG }}
+            
+            ### 📦 Installation
+            ```bash
+            npm install
+            npm start
+            ```
+            
+            ### 🚀 Deployment
+            This release has been automatically built and tested.
+          draft: false
+          prerelease: false
+
+      - name: 📤 Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-package.zip
+          asset_name: release-package.zip
+          asset_content_type: application/zip
