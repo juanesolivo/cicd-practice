@@ -32,15 +32,16 @@ app.get('/api/users', (req, res) => {
   res.json(users);
 });
 
-// Error handling middleware
-app.use((err, req, res) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
-
-// 404 handler
+// 404 handler (must come before error middleware)
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handling middleware (must be last and have 4 parameters)
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 // Start server only if not in test environment
