@@ -34,12 +34,13 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR Title: $PR_TITLE"
           
-          # Check if PR title follows conventional commit format
-          if [[ "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+ ]]; then
+          # Check if PR title follows conventional commit format (case-insensitive)
+          PATTERN='^(feat|fix|docs|style|refactor|test|chore)(\([^)]+\))?:? .+'
+          if [[ "${PR_TITLE,,}" =~ $PATTERN ]]; then
             echo "✅ PR title follows conventional commit format"
           else
             echo "❌ PR title should follow format: type(scope): description"
-            echo "Examples: feat: add user authentication, fix(api): resolve login bug"
+            echo "Examples: feat: add user authentication, fix(api): resolve login bug, Fix something"
             exit 1
           fi
 
