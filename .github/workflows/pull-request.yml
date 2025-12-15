@@ -39,8 +39,8 @@ jobs:
           if [[ "${PR_TITLE,,}" =~ $PATTERN ]]; then
             echo "✅ PR title follows conventional commit format"
           else
-            echo "❌ PR title should follow format: type(scope): description"
-            echo "Examples: feat: add user authentication, fix(api): resolve login bug, Fix something"
+            echo "❌ PR title should follow format: type[(scope)][: ]description"
+            echo "Examples: feat: add user authentication, fix(api): resolve login bug, Fix authentication issue"
             exit 1
           fi
 
