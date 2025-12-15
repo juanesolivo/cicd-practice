@@ -7,9 +7,9 @@ on:
     # Note: GitHub Actions scheduling can be delayed during high load periods
     # - cron: '23 5 * * *'
   workflow_dispatch: # Allows manual trigger
-  push:
-    branches: [ master ]
-    paths: [ '.github/workflows/nightly.yml' ] # Trigger when this file changes
+  #push:
+  #  branches: [ master ]
+  #  paths: [ '.github/workflows/nightly.yml' ] # Trigger when this file changes
 
 env:
   NODE_VERSION: '18'
