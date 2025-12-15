@@ -79,9 +79,26 @@ jobs:
           git add package*.json
           if ! git diff --staged --quiet; then
             git commit -m "fix: apply npm audit fix to resolve vulnerabilities [skip ci]"
-            git pull --rebase origin ${{ github.head_ref || github.ref_name }}
-            git push origin HEAD:${{ github.head_ref || github.ref_name }}
-          fi
+            # Retry loop for pull --rebase and push to handle race conditions
+            MAX_RETRIES=3
+            COUNT=0
+            SUCCESS=0
+            while [ $COUNT -lt $MAX_RETRIES ]; do
+              git pull --rebase origin ${{ github.head_ref || github.ref_name }} && \
+              git push origin HEAD:${{ github.head_ref || github.ref_name }}
+              if [ $? -eq 0 ]; then
+                SUCCESS=1
+                break
+              else
+                echo "Push failed due to possible race condition. Retrying... ($((COUNT+1))/$MAX_RETRIES)"
+                COUNT=$((COUNT+1))
+                sleep 2
+              fi
+            done
+            if [ $SUCCESS -ne 1 ]; then
+              echo "Failed to push audit fixes after $MAX_RETRIES attempts."
+              exit 1
+            fi
 
       - name: 🛡️ Run security scan with npm audit
         if: steps.audit.outcome == 'success'
