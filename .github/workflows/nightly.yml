@@ -5,7 +5,7 @@ on:
   schedule:
     # Runs at 5:23 AM UTC every day
     # Note: GitHub Actions scheduling can be delayed during high load periods
-    - cron: '23 5 * * *'
+    # - cron: '23 5 * * *'
   workflow_dispatch: # Allows manual trigger
   push:
     branches: [ master ]
